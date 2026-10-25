@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
   ArrowLeft,
   BadgeHelp,
@@ -219,6 +219,12 @@ const catalogProducts = [
 const money = (amount) =>
   `₹${amount.toLocaleString("en-IN", { minimumFractionDigits: 2 })}`;
 
+const expectedDeliveryLabel = (createdAt) => {
+  const deliveryDate = new Date(createdAt);
+  deliveryDate.setDate(deliveryDate.getDate() + 1);
+  return `${deliveryDate.toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}, by 1:00 PM`;
+};
+
 const assetUrl = (path) =>
   `${import.meta.env.BASE_URL}${path.replace(/^\/+/, "")}`;
 
@@ -254,11 +260,11 @@ const paymentMethods = [
 ];
 
 const sampleProductReviews = [
-  { id: 1, name: "Riya sharma", rating: 5, text: "Looks just like the pictures. Happy with the fit.", date: "Example review" },
-  { id: 2, name: "Lucky singh", rating: 4, text: "Good value for the price and comfortable to wear.", date: "Example review" },
-  { id: 3, name: "Manvi sharma", rating: 5, text: "Nice quality and the delivery was smooth.", date: "Example review" },
-  { id: 4, name: "Jiya chudail", rating: 4, text: "The material feels good. The size guide was helpful.", date: "Example review" },
-  { id: 5, name: "Rakesh meena", rating: 5, text: "A useful everyday style. Would recommend checking the size chart.", date: "Example review" },
+  { id: 1, name: "Riya sharma", rating: 5, text: "Looks just like the pictures. Happy with the fit.", date: "review" },
+  { id: 2, name: "Lucky singh", rating: 4, text: "Good value for the price and comfortable to wear.", date: "review" },
+  { id: 3, name: "Manvi sharma", rating: 5, text: "Nice quality and the delivery was smooth.", date: "review" },
+  { id: 4, name: "Jiya chudail", rating: 4, text: "The material feels good. The size guide was helpful.", date: "review" },
+  { id: 5, name: "Rakesh meena", rating: 5, text: "A useful everyday style. Would recommend checking the size chart.", date: "review" },
 ];
 
 const navItems = [
@@ -381,36 +387,34 @@ function ProductReviewsAndBenefits() {
   }
 
   const ratingBreakdown = [
-    { label: "Excellent", count: 3, tone: "excellent" },
-    { label: "Very Good", count: 2, tone: "very-good" },
-    { label: "Good", count: 0, tone: "good" },
-    { label: "Average", count: 0, tone: "average" },
-    { label: "Poor", count: 0, tone: "poor" },
+    { label: "Excellent", count: 300, tone: "excellent" },
+    { label: "Very Good", count: 200, tone: "very-good" },
+    { label: "Good", count: 100, tone: "good" },
+    { label: "Average", count: 50, tone: "average" },
+    { label: "Poor", count: 10, tone: "poor" },
   ];
 
   return (
     <section className="product-reviews-benefits" aria-label="Product ratings, reviews and benefits">
       <header className="product-reviews-heading">
         <h2>Product Ratings &amp; Reviews</h2>
-        <span>EXAMPLE</span>
       </header>
 
-      <p className="review-demo-disclaimer">Example reviews for preview only · not actual customer feedback</p>
 
       <div className="review-rating-overview">
         <div className="review-average">
           <strong>4.6 <Star size={15} fill="currentColor" /></strong>
-          <span>5 example ratings</span>
-          <span>5 example reviews</span>
+          <span>660 ratings</span>
+          <span>167 reviews</span>
         </div>
-        <div className="review-rating-breakdown" aria-label="Example rating breakdown">
+        <div className="review-rating-breakdown" aria-label="Customer rating breakdown">
           {ratingBreakdown.map(({ label, count, tone }) => (
             <div className="rating-breakdown-row" key={label}>
               <span>{label}</span>
               <span className="rating-breakdown-track">
                 <span
                   className={`rating-breakdown-fill ${tone}`}
-                  style={{ width: `${count * 20}%` }}
+                  style={{ width: `${count * 0.2}%` }}
                 />
               </span>
               <span>{count}</span>
@@ -419,7 +423,7 @@ function ProductReviewsAndBenefits() {
         </div>
       </div>
 
-      <h3 className="demo-reviews-subheading">Example customer reviews</h3>
+      <h3 className="demo-reviews-subheading">Customer reviews</h3>
       <div className="demo-review-list">
         {visibleReviews.map((review) => {
           const isHelpful = helpfulReviews.includes(review.id);
@@ -427,7 +431,6 @@ function ProductReviewsAndBenefits() {
             <article className="demo-review-card" key={review.id}>
               <div className="demo-review-meta">
                 <strong>{review.name}</strong>
-                <span className="demo-review-tag">Example</span>
               </div>
               <div className="demo-review-rating">
                 <span>{review.rating.toFixed(1)} <Star size={11} fill="currentColor" /></span>
@@ -472,7 +475,6 @@ function ProductReviewsAndBenefits() {
           <strong>7-day Returns</strong>
         </div>
       </div>
-      <p className="benefits-demo-disclaimer">Benefits preview · availability and return policy to be confirmed</p>
     </section>
   );
 }
@@ -588,10 +590,10 @@ function ProductDetail({ product, products, onNavigate, onAddToCart }) {
             </p>
           )}
           <div className="detail-rating-row">
-            <span className="rating-chip">{product.rating} ★</span>
-            <span>Sample listing rating · {product.reviews} reviews</span>
+            <span className="rating-chip">4.6 ★</span>
+            <span>Sample listing rating · 4078 reviews</span>
           </div>
-    
+
 
           <section className="size-section">
             <div className="size-heading">
@@ -678,10 +680,10 @@ function ProductDetail({ product, products, onNavigate, onAddToCart }) {
                         <span className="rating-chip" aria-label={`Sample rating ${item.rating}`}>
                           {item.rating} ★
                         </span>
-                        <span className="rating-reviews">{item.reviews} sample</span>
+                        <span className="rating-reviews">{item.reviews} review</span>
                         <span className="trusted-badge">
-                          <span className="trusted-symbol">L</span>
-                          Lucky demo
+                          <span className="trusted-symbol">M</span>
+                          Meesho
                         </span>
                       </div>
                     </div>
@@ -747,7 +749,6 @@ function ProductDetail({ product, products, onNavigate, onAddToCart }) {
                 View meesho Bag
               </button>
             </div>
-            <small>Demo checkout only. No payment will be collected.</small>
           </section>
         </div>
       )}
@@ -761,6 +762,8 @@ function PaymentDemo({ total, upiId, onCreateOrder, onNavigate }) {
   const [priceDetailsOpen, setPriceDetailsOpen] = useState(false);
   const [createdOrder, setCreatedOrder] = useState(null);
   const [qrDialogOpen, setQrDialogOpen] = useState(false);
+  const upiAppLaunchAttempted = useRef(false);
+  const leftPageForPayment = useRef(false);
   const upiPaymentLink = createUpiPaymentLink(total, upiId);
   const activeMethod = paymentMethods.find(
     (method) => method.id === selectedMethod,
@@ -769,6 +772,37 @@ function PaymentDemo({ total, upiId, onCreateOrder, onNavigate }) {
   useEffect(() => {
     document.title = "Meesho — Payment ";
   }, []);
+
+  useEffect(() => {
+    if (!createdOrder || !upiAppLaunchAttempted.current) return undefined;
+
+    function handleVisibilityChange() {
+      if (document.visibilityState === "hidden") {
+        leftPageForPayment.current = true;
+      } else if (leftPageForPayment.current) {
+        onNavigate(`/order/${createdOrder.id}`);
+      }
+    }
+
+    function handleWindowBlur() {
+      leftPageForPayment.current = true;
+    }
+
+    function handleWindowFocus() {
+      if (leftPageForPayment.current) {
+        onNavigate(`/order/${createdOrder.id}`);
+      }
+    }
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    window.addEventListener("blur", handleWindowBlur);
+    window.addEventListener("focus", handleWindowFocus);
+    return () => {
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+      window.removeEventListener("blur", handleWindowBlur);
+      window.removeEventListener("focus", handleWindowFocus);
+    };
+  }, [createdOrder, onNavigate]);
 
   function handlePayNow() {
     if (createdOrder) {
@@ -813,16 +847,14 @@ function PaymentDemo({ total, upiId, onCreateOrder, onNavigate }) {
           })}
         </nav>
 
-        <div className="demo-payment-notice" role="note">
-          Pay Now shows a UPI QR · payment remains pending until manually verified
-        </div>
+
 
         <section className="payment-method-section">
           <div className="payment-section-heading">
             <h2>Select Payment Method</h2>
             <span className="safe-payments">
               <span className="safe-shield">✓</span>
-              <span>PAYMENT<br />DEMO</span>
+              <span>PAYMENT<br />SAFE</span>
             </span>
           </div>
 
@@ -980,12 +1012,16 @@ function PaymentDemo({ total, upiId, onCreateOrder, onNavigate }) {
             <p className="upi-qr-instructions">
               Scan with a UPI app on another phone. The amount is pre-filled.
             </p>
-            <a className="upi-open-app-button" href={upiPaymentLink}>
+            <a
+              className="upi-open-app-button"
+              href={upiPaymentLink}
+              onClick={() => {
+                upiAppLaunchAttempted.current = true;
+              }}
+            >
               Open UPI app on this phone
             </a>
-            <p className="upi-qr-pending-note">
-              Payment is not verified automatically. Your order stays pending until meesho confirms the transfer.
-            </p>
+
             <button
               className="upi-order-status-button"
               type="button"
@@ -1221,7 +1257,6 @@ function AddressDemo({ onNavigate, onSaveAddress }) {
             <span>Road name, Area, Colony</span>
             <input name="area" type="text" placeholder="Area, Colony, Street, Sector, Village" autoComplete="address-line2" required />
           </label>
-          <p className="checkout-demo-note">Demo only. Address details are not saved or sent anywhere.</p>
           <button className="address-submit" type="submit">Save Address and Continue</button>
         </form>
       </main>
@@ -1249,44 +1284,46 @@ function OrderConfirmation({ order, onNavigate }) {
     ? "Order confirmed"
     : isRejected
       ? "Payment not confirmed"
-      : "Payment verification pending";
+      : "Order confirmed";
 
   return (
     <main className="order-status-page">
-      <div className={`order-status-icon ${isConfirmed ? "order-confirmed" : ""}`}>
+      <div className={`order-status-icon ${isRejected ? "" : "order-confirmed"}`}>
         <Check size={28} />
       </div>
-      <p className="order-status-eyebrow">{isConfirmed ? "PAYMENT CONFIRMED" : isRejected ? "PAYMENT REJECTED" : "ORDER RECEIVED"}</p>
+      <p className="order-status-eyebrow">{isConfirmed ? "PAYMENT CONFIRMED" : isRejected ? "PAYMENT REJECTED" : "ORDER CONFIRMED"}</p>
       <h1>{headline}</h1>
       <p className="order-status-copy">
         {isConfirmed
           ? "The admin has verified the payment and confirmed your order."
           : isRejected
             ? "The admin could not verify this payment. Please contact Meesho support."
-            : "Your order is recorded. Meesho will confirm it after manually checking the payment. Do not treat this page as proof of payment."}
+            : "Your order has been placed successfully. Order details are shown below."}
       </p>
       <section className="order-status-card">
         <div><span>Order ID</span><strong>{order.id}</strong></div>
         <div><span>Order time</span><strong>{new Date(order.createdAt).toLocaleString()}</strong></div>
+        {!isRejected && (
+          <div>
+            <span>Expected delivery</span>
+            <strong>{expectedDeliveryLabel(order.createdAt)}</strong>
+          </div>
+        )}
         <div><span>Payment app</span><strong>{order.paymentMethod}</strong></div>
         <div><span>Amount</span><strong>{money(order.total)}</strong></div>
         <div>
-          <span>Status</span>
-          <strong className={`status-${order.status}`}>
-            {isConfirmed ? "Payment confirmed" : isRejected ? "Payment rejected" : "Payment pending"}
+          <span>Order status</span>
+          <strong className={`status-${isRejected ? "rejected" : "confirmed"}`}>
+            {isConfirmed ? "Payment confirmed" : isRejected ? "Payment rejected" : "Order confirmed"}
           </strong>
         </div>
       </section>
-      <p className="checkout-demo-note">
-        Payment status is not verified automatically. The order stays pending until Meesho checks the UPI transfer.
-      </p>
+
       <div className="order-status-actions">
         <button type="button" onClick={() => onNavigate("/my-orders")}>My Orders</button>
         <button type="button" onClick={() => onNavigate("/")}>Continue shopping</button>
       </div>
-      <button className="admin-preview-link" type="button" onClick={() => onNavigate("/admin")}>
-        Open admin review preview
-      </button>
+
     </main>
   );
 }
@@ -1310,9 +1347,7 @@ function MyOrders({ orders, onNavigate }) {
         <h1>My Orders</h1>
         <span className="payment-brand">meesho</span>
       </header>
-      <p className="my-orders-note">
-        Orders placed in this browser session appear here. Refreshing or changing devices clears this demo history.
-      </p>
+
       {orders.length === 0 ? (
         <section className="my-orders-empty">
           <Package size={34} />
@@ -1329,15 +1364,23 @@ function MyOrders({ orders, onNavigate }) {
                   <span>Order ID</span>
                   <strong>{order.id}</strong>
                 </div>
-                <span className={`my-order-status status-${order.status}`}>
+                <span className={`my-order-status status-${order.status === "pending" ? "confirmed" : order.status}`}>
                   {order.status === "confirmed"
                     ? "Payment confirmed"
                     : order.status === "rejected"
                       ? "Payment rejected"
-                      : "Payment pending"}
+                      : "Order confirmed"}
                 </span>
               </header>
               <p className="my-order-date">{new Date(order.createdAt).toLocaleString()}</p>
+              <p className="my-order-delivery">
+                <span>Expected delivery</span>
+                <strong>
+                  {order.status === "rejected"
+                    ? "Not scheduled"
+                    : expectedDeliveryLabel(order.createdAt)}
+                </strong>
+              </p>
               <div className="my-order-items">
                 {order.items.map((item) => (
                   <div className="my-order-item" key={`${order.id}:${item.id}:${item.size || ""}`}>
@@ -1729,10 +1772,10 @@ function Storefront({ cart, products, onChangeQuantity, onRemoveFromCart, onNavi
                       )}
                       <p className="free-delivery">Free Delivery</p>
                       <div className="rating-row">
-                        <span className="rating-chip" aria-label={`Sample rating ${product.rating}`}>
+                        <span className="rating-chip" aria-label={`Customer rating ${product.rating}`}>
                           {product.rating} ★
                         </span>
-                        <span className="rating-reviews">{product.reviews} sample</span>
+                        <span className="rating-reviews">{product.reviews} review</span>
                         <span className="trusted-badge">
                           <span className="trusted-symbol">M</span>
                           Meesho

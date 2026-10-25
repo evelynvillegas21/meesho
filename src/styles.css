@@ -1418,6 +1418,19 @@ input:focus-visible {
   font-size: 10px;
 }
 
+.my-order-delivery {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin: -2px 0 9px;
+  color: #16754e;
+  font-size: 10px;
+}
+
+.my-order-delivery strong {
+  text-align: right;
+}
+
 .my-order-items {
   display: grid;
   border-top: 1px solid #ededf1;
