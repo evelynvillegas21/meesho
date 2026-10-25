@@ -216,22 +216,31 @@ const catalogProducts = [
   })),
 ];
 
-const bannerImages = ["/assets/banners/bb1.jpg", "/assets/banners/bb2.jpg", "/assets/banners/bb3.jpg"];
-
 const money = (amount) =>
   `₹${amount.toLocaleString("en-IN", { minimumFractionDigits: 2 })}`;
+
+const assetUrl = (path) =>
+  `${import.meta.env.BASE_URL}${path.replace(/^\/+/, "")}`;
+
+const bannerImages = [
+  assetUrl("assets/banners/bb1.jpg"),
+  assetUrl("assets/banners/bb2.jpg"),
+  assetUrl("assets/banners/bb3.jpg"),
+];
 
 const productImageSrc = (image) =>
   /^https?:\/\//i.test(image)
     ? image
-    : image.startsWith("/")
-      ? image
-      : `/assets/products/${image}`;
+    : assetUrl(
+        image.replace(/^\/+/, "").startsWith("assets/")
+          ? image.replace(/^\/+/, "")
+          : `assets/products/${image.replace(/^\/+/, "")}`,
+      );
 
 const createUpiPaymentLink = (amount, upiId) => {
   const params = new URLSearchParams({
     pa: upiId,
-    pn: "Lucky Private Ltd.",
+    pn: "meesho Private Ltd.",
     am: amount.toFixed(2),
     cu: "INR",
   });
@@ -245,11 +254,11 @@ const paymentMethods = [
 ];
 
 const sampleProductReviews = [
-  { id: 1, name: "Riya", rating: 5, text: "Looks just like the pictures. Happy with the fit.", date: "Example review" },
-  { id: 2, name: "Lucky", rating: 4, text: "Good value for the price and comfortable to wear.", date: "Example review" },
-  { id: 3, name: "Manvi", rating: 5, text: "Nice quality and the delivery was smooth.", date: "Example review" },
-  { id: 4, name: "Jiya", rating: 4, text: "The material feels good. The size guide was helpful.", date: "Example review" },
-  { id: 5, name: "Rakesh", rating: 5, text: "A useful everyday style. Would recommend checking the size chart.", date: "Example review" },
+  { id: 1, name: "Riya sharma", rating: 5, text: "Looks just like the pictures. Happy with the fit.", date: "Example review" },
+  { id: 2, name: "Lucky singh", rating: 4, text: "Good value for the price and comfortable to wear.", date: "Example review" },
+  { id: 3, name: "Manvi sharma", rating: 5, text: "Nice quality and the delivery was smooth.", date: "Example review" },
+  { id: 4, name: "Jiya chudail", rating: 4, text: "The material feels good. The size guide was helpful.", date: "Example review" },
+  { id: 5, name: "Rakesh meena", rating: 5, text: "A useful everyday style. Would recommend checking the size chart.", date: "Example review" },
 ];
 
 const navItems = [
@@ -307,7 +316,7 @@ function BannerCarousel({ onSelect }) {
               aria-label={`Open sale banner ${(index % bannerImages.length) + 1}`}
               tabIndex={index === slide % bannerImages.length ? 0 : -1}
             >
-              <img src={image} alt={`Lucky sale banner ${(index % bannerImages.length) + 1}`} />
+              <img src={image} alt={`Meesho sale banner ${(index % bannerImages.length) + 1}`} />
             </button>
           ))}
         </div>
@@ -349,7 +358,7 @@ function DailyDeals() {
         Daily Deals
       </span>
       <span className="deals-timer">
-        <img src="/assets/widgets/7tepb.png" alt="" />
+        <img src={assetUrl("assets/widgets/7tepb.png")} alt="" />
         <span>{timerMinutes}m : {timerSeconds}s</span>
       </span>
     </div>
@@ -449,7 +458,7 @@ function ProductReviewsAndBenefits() {
         <ChevronRight size={19} className={showAllReviews ? "reviews-expanded" : ""} />
       </button>
 
-      <div className="product-benefits-demo" aria-label="Lucky benefits preview">
+      <div className="product-benefits-demo" aria-label="meesho benefits preview">
         <div className="product-benefit">
           <span className="benefit-icon"><BadgeCheck size={21} /></span>
           <strong>Lowest Price</strong>
@@ -479,7 +488,7 @@ function ProductDetail({ product, products, onNavigate, onAddToCart }) {
   );
 
   useEffect(() => {
-    document.title = `${product.name} — Lucky`;
+    document.title = `${product.name} — meesho`;
   }, [product.name]);
 
   useEffect(() => {
@@ -510,7 +519,7 @@ function ProductDetail({ product, products, onNavigate, onAddToCart }) {
           <ArrowLeft size={23} />
         </button>
         <button className="detail-brand" type="button" onClick={() => onNavigate("/")}>
-          lucky
+          meesho
         </button>
         <span className="header-spacer" />
         <button
@@ -582,9 +591,7 @@ function ProductDetail({ product, products, onNavigate, onAddToCart }) {
             <span className="rating-chip">{product.rating} ★</span>
             <span>Sample listing rating · {product.reviews} reviews</span>
           </div>
-          <p className="detail-demo-note">
-            Lucky demo · Prices, offers and listing details are sample content.
-          </p>
+    
 
           <section className="size-section">
             <div className="size-heading">
@@ -619,7 +626,7 @@ function ProductDetail({ product, products, onNavigate, onAddToCart }) {
             <div className="accordion-copy">
               <p>{product.name}</p>
               <p>Category: Men's casual wear</p>
-              <p>Choose a size above to add this item to your Lucky bag.</p>
+              <p>Choose a size above to add this item to your meesho bag.</p>
             </div>
           </details>
 
@@ -718,7 +725,7 @@ function ProductDetail({ product, products, onNavigate, onAddToCart }) {
             className="detail-cart-dialog"
             role="dialog"
             aria-modal="true"
-            aria-label="Added to Lucky bag"
+            aria-label="Added to meesho bag"
             onClick={(event) => event.stopPropagation()}
           >
             <button
@@ -730,14 +737,14 @@ function ProductDetail({ product, products, onNavigate, onAddToCart }) {
               <X size={19} />
             </button>
             <span className="detail-cart-check"><Check size={19} /></span>
-            <h2>Added to your Lucky bag</h2>
+            <h2>Added to your meesho bag</h2>
             <p>{product.name} · Size {selectedSize}</p>
             <div className="detail-cart-actions">
               <button type="button" onClick={() => { setShowCart(false); onNavigate("/"); }}>
                 Continue shopping
               </button>
               <button type="button" onClick={() => { setShowCart(false); onNavigate("/cart"); }}>
-                View Lucky Bag
+                View meesho Bag
               </button>
             </div>
             <small>Demo checkout only. No payment will be collected.</small>
@@ -760,7 +767,7 @@ function PaymentDemo({ total, upiId, onCreateOrder, onNavigate }) {
   );
 
   useEffect(() => {
-    document.title = "Lucky — Payment demo";
+    document.title = "Meesho — Payment ";
   }, []);
 
   function handlePayNow() {
@@ -778,11 +785,11 @@ function PaymentDemo({ total, upiId, onCreateOrder, onNavigate }) {
     <div className="payment-demo-page">
       <main className="payment-demo-content">
         <header className="payment-page-header">
-          <a className="payment-back" href="/" aria-label="Back to Lucky store">
+          <a className="payment-back" href={import.meta.env.BASE_URL} aria-label="Back to meesho store">
             <ArrowLeft size={23} />
           </a>
           <h1>PAYMENT</h1>
-          <span className="payment-brand">lucky</span>
+          <span className="payment-brand">meesho</span>
         </header>
 
         <nav className="checkout-progress" aria-label="Checkout progress">
@@ -897,7 +904,7 @@ function PaymentDemo({ total, upiId, onCreateOrder, onNavigate }) {
           >
             <div className="payment-dialog-title">
               <h2 id="payment-method-dialog-title">Choose Payment Method</h2>
-              <span>Lucky demo</span>
+              <span>meesho</span>
             </div>
             <div className="payment-method-options">
               {paymentMethods.map((method) => (
@@ -977,7 +984,7 @@ function PaymentDemo({ total, upiId, onCreateOrder, onNavigate }) {
               Open UPI app on this phone
             </a>
             <p className="upi-qr-pending-note">
-              Payment is not verified automatically. Your order stays pending until Lucky confirms the transfer.
+              Payment is not verified automatically. Your order stays pending until meesho confirms the transfer.
             </p>
             <button
               className="upi-order-status-button"
@@ -1070,7 +1077,7 @@ function CartCheckout({ cart, onNavigate, onChangeQuantity, onRemoveFromCart }) 
   );
 
   useEffect(() => {
-    document.title = "Lucky — Cart";
+    document.title = "Meesho — Cart";
   }, []);
 
   return (
@@ -1081,13 +1088,13 @@ function CartCheckout({ cart, onNavigate, onChangeQuantity, onRemoveFromCart }) 
             <ArrowLeft size={23} />
           </button>
           <h1>CART</h1>
-          <span className="payment-brand">lucky</span>
+          <span className="payment-brand">meesho</span>
         </header>
         <CheckoutProgress currentStep={0} />
         {cart.length === 0 ? (
           <div className="checkout-empty">
             <ShoppingCart size={32} />
-            <p>Your Lucky Bag is empty</p>
+            <p>Your meesho Bag is empty</p>
             <button type="button" onClick={() => onNavigate("/")}>Continue shopping</button>
           </div>
         ) : (
@@ -1158,7 +1165,7 @@ function CartCheckout({ cart, onNavigate, onChangeQuantity, onRemoveFromCart }) 
 
 function AddressDemo({ onNavigate, onSaveAddress }) {
   useEffect(() => {
-    document.title = "Lucky — Shipping Address";
+    document.title = "Meesho — Shipping Address";
   }, []);
 
   function submitAddress(event) {
@@ -1177,7 +1184,7 @@ function AddressDemo({ onNavigate, onSaveAddress }) {
             <ArrowLeft size={23} />
           </button>
           <h1>ADD DELIVERY ADDRESS</h1>
-          <span className="payment-brand">lucky</span>
+          <span className="payment-brand">meesho</span>
         </header>
         <CheckoutProgress currentStep={1} />
         <form className="address-form" onSubmit={submitAddress}>
@@ -1224,14 +1231,14 @@ function AddressDemo({ onNavigate, onSaveAddress }) {
 
 function OrderConfirmation({ order, onNavigate }) {
   useEffect(() => {
-    document.title = "Lucky — Order received";
+    document.title = "Meesho — Order received";
   }, []);
 
   if (!order) {
     return (
       <section className="order-status-page">
         <h1>Order not found</h1>
-        <button type="button" onClick={() => onNavigate("/")}>Back to Lucky</button>
+        <button type="button" onClick={() => onNavigate("/")}>Back to Meesho</button>
       </section>
     );
   }
@@ -1255,8 +1262,8 @@ function OrderConfirmation({ order, onNavigate }) {
         {isConfirmed
           ? "The admin has verified the payment and confirmed your order."
           : isRejected
-            ? "The admin could not verify this payment. Please contact Lucky support."
-            : "Your order is recorded. Lucky will confirm it after manually checking the payment. Do not treat this page as proof of payment."}
+            ? "The admin could not verify this payment. Please contact Meesho support."
+            : "Your order is recorded. Meesho will confirm it after manually checking the payment. Do not treat this page as proof of payment."}
       </p>
       <section className="order-status-card">
         <div><span>Order ID</span><strong>{order.id}</strong></div>
@@ -1271,7 +1278,7 @@ function OrderConfirmation({ order, onNavigate }) {
         </div>
       </section>
       <p className="checkout-demo-note">
-        Payment status is not verified automatically. The order stays pending until Lucky checks the UPI transfer.
+        Payment status is not verified automatically. The order stays pending until Meesho checks the UPI transfer.
       </p>
       <div className="order-status-actions">
         <button type="button" onClick={() => onNavigate("/my-orders")}>My Orders</button>
@@ -1286,7 +1293,7 @@ function OrderConfirmation({ order, onNavigate }) {
 
 function MyOrders({ orders, onNavigate }) {
   useEffect(() => {
-    document.title = "Lucky — My Orders";
+    document.title = "Meesho — My Orders";
   }, []);
 
   return (
@@ -1301,7 +1308,7 @@ function MyOrders({ orders, onNavigate }) {
           <ArrowLeft size={22} />
         </button>
         <h1>My Orders</h1>
-        <span className="payment-brand">lucky</span>
+        <span className="payment-brand">meesho</span>
       </header>
       <p className="my-orders-note">
         Orders placed in this browser session appear here. Refreshing or changing devices clears this demo history.
@@ -1384,7 +1391,7 @@ function AdminOrdersDemo({
   const [notice, setNotice] = useState("");
 
   useEffect(() => {
-    document.title = "Lucky — Admin panel";
+    document.title = "Meesho — Admin panel";
   }, []);
 
   function saveUpiId(event) {
@@ -1426,7 +1433,7 @@ function AdminOrdersDemo({
   return (
     <main className="admin-demo-page">
       <header className="admin-demo-header">
-        <div><span>LUCKY</span><h1>Admin panel</h1></div>
+        <div><span>MEESHO</span><h1>Admin panel</h1></div>
         <button type="button" onClick={() => onNavigate("/")}>Store</button>
       </header>
       <p className="admin-demo-warning">
@@ -1530,7 +1537,7 @@ function Storefront({ cart, products, onChangeQuantity, onRemoveFromCart, onNavi
   const [notice, setNotice] = useState("");
 
   useEffect(() => {
-    document.title = "Lucky — Everyday style, lovely prices";
+    document.title = "Meesho — Everyday style, lovely prices";
   }, []);
 
   useEffect(() => {
@@ -1583,9 +1590,9 @@ function Storefront({ cart, products, onChangeQuantity, onRemoveFromCart, onNavi
           >
             {menuOpen ? <X size={23} /> : <Menu size={23} />}
           </button>
-          <a className="brand" href="#" aria-label="Lucky home">
-            <span className="brand-symbol">L</span>
-            <span>lucky</span>
+          <a className="brand" href="#" aria-label="Meesho home">
+            <span className="brand-symbol">M</span>
+            <span>meesho</span>
           </a>
           <div className="header-spacer" />
           <button
@@ -1644,7 +1651,7 @@ function Storefront({ cart, products, onChangeQuantity, onRemoveFromCart, onNavi
           className="live-sale-banner"
           aria-label="Shop the sale"
         >
-          <img src="/assets/widgets/mwccw.gif" alt="Sale is live" />
+          <img src={assetUrl("assets/widgets/mwccw.gif")} alt="Sale is live" />
         </a>
 
         <BannerCarousel onSelect={() => selectNav("Categories")} />
@@ -1661,7 +1668,7 @@ function Storefront({ cart, products, onChangeQuantity, onRemoveFromCart, onNavi
 
         <a className="offer-widget" href="#products" aria-label="View sale offers">
           <img
-            src="/assets/widgets/xwgyl_800.webp"
+            src={assetUrl("assets/widgets/xwgyl_800.webp")}
             alt="Lucky festive sale offers"
           />
         </a>
@@ -1674,7 +1681,7 @@ function Storefront({ cart, products, onChangeQuantity, onRemoveFromCart, onNavi
             <button
               type="button"
               className="filter-button"
-              onClick={() => setNotice("Showing all Lucky picks")}
+              onClick={() => setNotice("Showing all Meesho picks")}
             >
               <span>Hot Sell</span>
               <ChevronRight size={14} />
@@ -1727,8 +1734,8 @@ function Storefront({ cart, products, onChangeQuantity, onRemoveFromCart, onNavi
                         </span>
                         <span className="rating-reviews">{product.reviews} sample</span>
                         <span className="trusted-badge">
-                          <span className="trusted-symbol">L</span>
-                          Lucky demo
+                          <span className="trusted-symbol">M</span>
+                          Meesho
                         </span>
                       </div>
                     </div>
@@ -1772,7 +1779,7 @@ function Storefront({ cart, products, onChangeQuantity, onRemoveFromCart, onNavi
         <div className="drawer-backdrop" onClick={() => setCartOpen(false)}>
           <aside
             className="cart-drawer"
-            aria-label="Lucky bag"
+            aria-label="Meesho bag"
             onClick={(event) => event.stopPropagation()}
           >
             <div className="drawer-heading">
@@ -1784,7 +1791,7 @@ function Storefront({ cart, products, onChangeQuantity, onRemoveFromCart, onNavi
               >
                 <ArrowLeft size={22} />
               </button>
-              <h2>Your Lucky Bag ({cartCount})</h2>
+              <h2>Your Meesho Bag ({cartCount})</h2>
             </div>
             {cart.length === 0 ? (
               <div className="empty-cart">
@@ -1874,8 +1881,12 @@ function App() {
   }, []);
 
   function navigate(path) {
-    window.history.pushState({}, "", path);
-    setPathname(path);
+    const relativePath = path.replace(/^\/+/, "");
+    const targetPath = relativePath
+      ? `${import.meta.env.BASE_URL}${relativePath}`
+      : import.meta.env.BASE_URL;
+    window.history.pushState({}, "", targetPath);
+    setPathname(targetPath);
     window.scrollTo(0, 0);
   }
 
@@ -1963,7 +1974,10 @@ function App() {
     );
   }
 
-  const normalizedPath = pathname.replace(/\/$/, "");
+  const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
+  const normalizedPath = pathname.startsWith(`${basePath}/`)
+    ? pathname.slice(basePath.length)
+    : pathname.replace(/\/$/, "");
   if (normalizedPath === "/payment") {
     const total = cart.reduce(
       (sum, item) => sum + (item.price ?? 99) * item.quantity,
